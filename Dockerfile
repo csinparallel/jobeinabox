@@ -48,6 +48,7 @@ RUN ln -snf /usr/share/zoneinfo/"$TZ" /etc/localtime && \
         build-essential \
         fp-compiler \
         git \
+	gosu \
         libapache2-mod-php \
         nodejs \
         octave \
@@ -80,6 +81,7 @@ RUN ln -snf /usr/share/zoneinfo/"$TZ" /etc/localtime && \
     cd /var/www/html/jobe && \
     /usr/bin/python3 /var/www/html/jobe/install && \
     chown -R ${APACHE_RUN_USER}:${APACHE_RUN_GROUP} /var/www/html && \
+    gosu www-data cp application/libraries/cpp_task.php application/libraries/pdc_task.php && \
     apt-get -y autoremove --purge && \
     apt-get -y clean && \
     rm -rf /var/lib/apt/lists/*
