@@ -11,6 +11,12 @@ LABEL \
     org.opencontainers.image.description="JobeInABox" \
     org.opencontainers.image.documentation="https://github.com/trampgeek/jobeinabox" \
     org.opencontainers.image.source="https://github.com/trampgeek/jobeinabox"
+LABEL \
+    org.csinparallel.authors="rab@stolaf.edu" \
+    org.csinparallel.title="JobeInABox_RSBE" \
+    org.csinparallel.description="Version of JobeInABox for Runestone Backend, to support PDC books" \
+    org.csinparallel.documentation="https://github.com/rabstolaf/jobeinabox" \
+    org.csinparallel.source="https://github.com/rabstolaf/jobeinabox" 
 
 ARG TZ=Pacific/Auckland
 # Set up the (apache) environment variables
