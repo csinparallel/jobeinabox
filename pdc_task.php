@@ -8,7 +8,7 @@
  *
  * @copyright  2014 Richard Lobb, University of Canterbury
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * modifications by rab@stolaf.edu March 2023
+ * adapted from cpp_task.php by rab@stolaf.edu, March 2023
  */
 
 require_once('application/libraries/LanguageTask.php');
@@ -23,23 +23,26 @@ class PDC_Task extends Task {
     }
 
     public static function getVersionCommand() {
-        return array('gcc --version', '/gcc \(.*\) ([0-9.]*)/');
+        return array('echo 0.1', '/([0-9.]*)/');
+    }
+
+    function rab_log($msg) {
+	$log = fopen("/shared/rab_log", "a");
+	fwrite($log, date("*** md_his: ") . $msg . "\n");
+	fclose($log);
     }
 
     public function compile() {
-        $src = basename($this->sourceFileName);
-        $this->executableFileName = $execFileName = "$src.exe";
-        $compileargs = $this->getParam('compileargs');
-        $linkargs = $this->getParam('linkargs');
-        $cmd = "g++ " . implode(' ', $compileargs) . " -o $execFileName $src " . implode(' ', $linkargs);
-        list($output, $this->cmpinfo) = $this->run_in_sandbox($cmd);
+        $this->executableFileName = $this->sourceFileName;
+#	$this->rab_log($this->executableFileName);	
+	chmod($this->executableFileName, 0755);
     }
 
 
     // A default name for C++ programs
     public function defaultFileName($sourcecode) {
-        return 'prog.cpp';
-    }
+        return 'prog';
+   }
 
 
     // The executable is the output from the compilation
@@ -49,6 +52,6 @@ class PDC_Task extends Task {
 
 
     public function getTargetFile() {
-        return '';
+        return $this->sourceFileName;
     }
 };
