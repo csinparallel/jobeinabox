@@ -11,6 +11,24 @@ RUN ln -snf /usr/share/zoneinfo/"$TZ" /etc/localtime && \
         apache2 \
         tzdata 
 
+ADD https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-4.1.5.tar.gz /var/local/
+RUN apt-get update && \
+    apt-get install -yq \
+        autoconf \
+        automake \
+        build-essential \
+        openssh-client && \
+    cd /var/local && \
+    tar xfz openmpi-4.1.5.tar.gz && \
+    cd openmpi-4.1.5 && \
+    ./configure --prefix=/usr/lib/openmpi-4.1.5 && \
+    make all install && \
+    cd /usr/lib && \
+    ln -s openmpi-4.1.5/ openmpi && \
+    for prog in `ls openmpi-4.1.5/bin` ; \
+    do  update-alternatives --install "/usr/bin/$prog" "$prog" "/usr/lib/openmpi-4.1.5/bin/$prog" 1 ; \
+    done
+
 # Expose apache
 EXPOSE 80
 
