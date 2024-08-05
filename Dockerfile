@@ -2,7 +2,7 @@
 # With thanks to David Bowes (d.h.bowes@lancaster.ac.uk) who did all the hard work
 # on this originally.
 
-FROM docker.io/ubuntu:22.04
+FROM docker.io/ubuntu:24.04
 
 # https://github.com/opencontainers/image-spec/blob/master/annotations.md
 LABEL \
@@ -14,12 +14,12 @@ LABEL \
 
 ARG TZ=Pacific/Auckland
 # Set up the (apache) environment variables
-ENV APACHE_RUN_USER www-data
-ENV APACHE_RUN_GROUP www-data
-ENV APACHE_LOG_DIR /var/log/apache2
-ENV APACHE_LOCK_DIR /var/lock/apache2
-ENV APACHE_PID_FILE /var/run/apache2.pid
-ENV LANG C.UTF-8
+ENV APACHE_RUN_USER=www-data
+ENV APACHE_RUN_GROUP=www-data
+ENV APACHE_LOG_DIR=/var/log/apache2
+ENV APACHE_LOCK_DIR=/var/lock/apache2
+ENV APACHE_PID_FILE=/var/run/apache2.pid
+ENV LANG=C.UTF-8
 
 # Copy apache virtual host file for later use
 COPY 000-jobe.conf /
@@ -43,20 +43,22 @@ RUN ln -snf /usr/share/zoneinfo/"$TZ" /etc/localtime && \
         fp-compiler \
         git \
         libapache2-mod-php \
+        nano \
         nodejs \
         octave \
-        openjdk-18-jdk \
+        default-jdk \
         php \
         php-cli \
         php-mbstring \
+        php-intl \
         python3 \
         python3-pip \
         python3-setuptools \
+        pylint \
         sqlite3 \
         sudo \
         tzdata \
         unzip && \
-    python3 -m pip install pylint && \
     pylint --reports=no --score=n --generate-rcfile > /etc/pylintrc && \
     ln -sf /proc/self/fd/1 /var/log/apache2/access.log && \
     ln -sf /proc/self/fd/1 /var/log/apache2/error.log && \
@@ -72,7 +74,7 @@ RUN ln -snf /usr/share/zoneinfo/"$TZ" /etc/localtime && \
     git clone https://github.com/trampgeek/jobe.git /var/www/html/jobe && \
     apache2ctl start && \
     cd /var/www/html/jobe && \
-    /usr/bin/python3 /var/www/html/jobe/install && \
+    /usr/bin/python3 /var/www/html/jobe/install --max_uid=500 && \
     chown -R ${APACHE_RUN_USER}:${APACHE_RUN_GROUP} /var/www/html && \
     apt-get -y autoremove --purge && \
     apt-get -y clean && \
